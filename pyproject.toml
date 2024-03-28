@@ -1,15 +1,19 @@
 [tool.poetry]
-name = "project-ai-gemini"
-version = "0.1.0"
-description = ""
 authors = ["prasannaboga <prasannaboga@gmail.com>"]
-readme = "README.md"
+description = ""
+name = "project-ai-gemini"
 packages = [{include = "project_ai_gemini"}]
+readme = "README.md"
+version = "0.1.0"
 
 [tool.poetry.dependencies]
+fastapi = "0.110.0"
+pydantic = "^2.6.4"
+pydantic-settings = "^2.2.1"
 python = "3.12.2"
-
+python-dotenv = "1.0.1"
+uvicorn = "0.29.0"
 
 [build-system]
-requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core"]

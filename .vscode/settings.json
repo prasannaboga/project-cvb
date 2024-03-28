@@ -1,0 +1,7 @@
+{
+  "editor.tabSize": 2,
+  "ruby.rubocop.onSave": false,
+  "autopep8.args": [
+    "--indent-size=2"
+  ]
+}
