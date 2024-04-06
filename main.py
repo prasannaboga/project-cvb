@@ -1,11 +1,11 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from project_cvb.config.settings import Settings
-from project_cvb.app import users
+from project_cvb.app.api import api_router
 
 
 app = FastAPI()
-app.include_router(users.router, prefix="/users")
+app.include_router(api_router, prefix="/api")
 app.mount("/public", StaticFiles(directory="public"), name="public")
 
 
