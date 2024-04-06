@@ -1,8 +1,8 @@
 from fastapi import APIRouter
 
-router = APIRouter()
+users_router = APIRouter()
 
 
-@router.get("/")
+@users_router.get("/")
 async def index():
   return [{"username": "prasanna"}, {"username": "kumar"}]
