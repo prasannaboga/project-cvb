@@ -12,7 +12,7 @@ app.mount("/public", StaticFiles(directory="public"), name="public")
 settings = Settings()
 
 
-@app.get("/")
+@app.get("/", tags=["root"])
 async def root():
   return {
       "message": "Hello World!",
