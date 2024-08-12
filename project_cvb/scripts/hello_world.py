@@ -1,9 +1,9 @@
-from project_cvb.config.settings import Settings, CustomSettings
+from project_cvb.config.settings import Settings, PyProjectSettings
 import google.generativeai as genai
 
 settings = Settings()
-custom_settings = CustomSettings() 
-print(custom_settings.model_dump())
+py_project_settings = PyProjectSettings() 
+print(py_project_settings.model_dump())
 
 genai.configure(api_key=settings.gemini_api_key)
 model = genai.GenerativeModel("gemini-pro")

@@ -2,7 +2,7 @@
 authors = ["prasannaboga"]
 description = ""
 name = "project-cvb"
-packages = [{include = "project_cvb"}]
+packages = [{ include = "project_cvb" }]
 readme = "README.md"
 version = "0.1.0"
 
@@ -14,7 +14,7 @@ ipywidgets = "8.1.2"
 openai = "1.35.5"
 pillow = "10.3.0"
 pydantic = "2.7.0"
-pydantic-settings = "2.3.4"
+pydantic-settings = "2.4.0"
 python = "3.12.2"
 python-dotenv = "1.0.1"
 uvicorn = "0.29.0"
@@ -23,7 +23,10 @@ uvicorn = "0.29.0"
 hello_world = "project_cvb.scripts.hello_world:main"
 
 [tool.custom_settings]
-new_value = "new_value"
+new_key1 = "new_value1"
+
+[tool.pydantic-settings]
+new_key = "new_value"
 
 [build-system]
 build-backend = "poetry.core.masonry.api"
