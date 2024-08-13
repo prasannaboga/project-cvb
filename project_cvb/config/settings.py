@@ -1,4 +1,4 @@
-from pydantic_settings import BaseSettings, SettingsConfigDict, PyprojectTomlConfigSettingsSource
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
@@ -8,10 +8,3 @@ class Settings(BaseSettings):
 
   class Config:
     env_file = ".env"
-
-
-class CustomSettings(Settings):
-
-  model_config = SettingsConfigDict(
-      pyproject_toml_table_header=("tool.custom_settings"),
-  )
