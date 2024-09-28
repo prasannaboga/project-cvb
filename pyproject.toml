@@ -21,6 +21,8 @@ uvicorn = "0.29.0"
 
 [tool.poetry.scripts]
 hello_world = "project_cvb.scripts.hello_world:main"
+01_function_calling = "project_cvb.scripts.01_function_calling:main"
+02_function_calling = "project_cvb.scripts.02_function_calling:main"
 
 [tool.custom_settings]
 new_key1 = "new_value1"
