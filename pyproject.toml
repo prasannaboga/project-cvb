@@ -2,27 +2,29 @@
 authors = ["prasannaboga"]
 description = ""
 name = "project-cvb"
-packages = [{ include = "project_cvb" }]
+packages = [{include = "project_cvb"}]
 readme = "README.md"
 version = "0.1.0"
 
 [tool.poetry.dependencies]
 fastapi = "0.111.0"
-google-generativeai = "0.7.1"
+google-generativeai = "0.8.2"
 ipykernel = "6.29.4"
 ipywidgets = "8.1.2"
 openai = "1.35.5"
 pillow = "10.3.0"
 pydantic = "2.7.0"
 pydantic-settings = "2.4.0"
+pymongo = "4.9.1"
 python = "3.12.2"
 python-dotenv = "1.0.1"
 uvicorn = "0.29.0"
+google-cloud-aiplatform = "^1.68.0"
 
 [tool.poetry.scripts]
-hello_world = "project_cvb.scripts.hello_world:main"
 01_function_calling = "project_cvb.scripts.01_function_calling:main"
 02_function_calling = "project_cvb.scripts.02_function_calling:main"
+hello_world = "project_cvb.scripts.hello_world:main"
 
 [tool.custom_settings]
 new_key1 = "new_value1"

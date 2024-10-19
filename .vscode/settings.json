@@ -3,5 +3,6 @@
   "ruby.rubocop.onSave": false,
   "autopep8.args": [
     "--indent-size=2"
-  ]
+  ],
+  "prettier.singleQuote": false
 }
