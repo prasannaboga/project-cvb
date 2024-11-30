@@ -1,6 +1,6 @@
 ## About
 
-:fire: Learning Google Gemini
+sample python project
 
 ### Start Development Server
 
