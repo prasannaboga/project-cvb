@@ -4,5 +4,9 @@
   "autopep8.args": [
     "--indent-size=2"
   ],
-  "prettier.singleQuote": false
+  "prettier.singleQuote": false,
+  "files.insertFinalNewline": true,
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.autopep8"
+  }
 }

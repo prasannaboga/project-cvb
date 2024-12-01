@@ -30,8 +30,8 @@ def main():
     user_input = input("You: ")
     if user_input.lower() == 'exit':
       break
-    # response = hello_world(user_input)
-    print(f"AI: {user_input}")
+    response = hello_world(user_input)
+    print(f"AI: {response}")
 
 
 if __name__ == "__main__":
