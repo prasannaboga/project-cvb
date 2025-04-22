@@ -33,6 +33,7 @@ target-version = ["py313"]
 02_function_calling = "project_cvb.scripts.02_function_calling:main"
 03_ollama_start1 = "project_cvb.scripts.03_ollama_start1:main"
 04_ollama_start2 = "project_cvb.scripts.04_ollama_start2:main"
+05_sentence_sentiment = "project_cvb.scripts.05_sentence_sentiment:main"
 hello_world = "project_cvb.scripts.hello_world:main"
 
 [tool.custom_settings]
