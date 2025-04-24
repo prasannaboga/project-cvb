@@ -15,6 +15,7 @@ ipykernel = "6.29.5"
 ipywidgets = "8.1.5"
 langchain-community = "0.3.22"
 mongoengine = "0.29.1"
+numpy = "1.26.4"
 ollama = "0.4.8"
 openai = "1.58.1"
 pillow = "11.0.0"
@@ -23,9 +24,9 @@ pydantic-settings = "2.7.0"
 pymongo = "4.10.1"
 python = "3.12.7"
 python-dotenv = "1.0.1"
+torch = "2.2.2"
 unstructured = {version = "0.17.2", extras = ["all-docs"]}
 uvicorn = "0.34.0"
-torch = "2.2.2"
 
 [tool.black]
 line-length = 120
