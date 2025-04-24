@@ -8,12 +8,13 @@ version = "0.1.0"
 
 [tool.poetry.dependencies]
 black = "24.10.0"
-fastapi = "0.115.6"
+fastapi = "0.115.9"
 google-cloud-aiplatform = "1.75.0"
 google-generativeai = "0.8.3"
 ipykernel = "6.29.5"
 ipywidgets = "8.1.5"
 langchain-community = "0.3.22"
+langchain-ollama = "0.3.2"
 mongoengine = "0.29.1"
 numpy = "1.26.4"
 ollama = "0.4.8"
@@ -27,6 +28,7 @@ python-dotenv = "1.0.1"
 torch = "2.2.2"
 unstructured = {version = "0.17.2", extras = ["all-docs"]}
 uvicorn = "0.34.0"
+chromadb = "^1.0.6"
 
 [tool.black]
 line-length = 120
