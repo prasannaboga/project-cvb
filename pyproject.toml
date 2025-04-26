@@ -26,9 +26,11 @@ pydantic-settings = "2.7.0"
 pymongo = "4.10.1"
 python = "3.12.7"
 python-dotenv = "1.0.1"
+streamlit = "1.44.1"
 torch = "2.2.2"
 unstructured = {version = "0.17.2", extras = ["all-docs"]}
 uvicorn = "0.34.0"
+watchdog = "6.0.0"
 
 [tool.black]
 line-length = 120
@@ -42,6 +44,7 @@ target-version = ["py313"]
 05_sentence_sentiment = "project_cvb.scripts.05_sentence_sentiment:main"
 06_pdf_rag_sample_create_vector_store = "project_cvb.scripts.06_pdf_rag_sample_create_vector_store:main"
 06_pdf_rag_sample_prompt_response = "project_cvb.scripts.06_pdf_rag_sample_prompt_response:main"
+06_pdf_rag_streamlit = "project_cvb.scripts.06_pdf_rag_streamlit:main"
 hello_world = "project_cvb.scripts.hello_world:main"
 
 [tool.custom_settings]
