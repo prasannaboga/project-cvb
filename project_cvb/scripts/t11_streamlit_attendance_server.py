@@ -22,6 +22,7 @@ def get_status_values():
 
 
 def paginate(queryset, page, page_size):
+  time.sleep(0.7)
   total_records = queryset.count()
   if total_records == 0:
     return [], 1, 1, 0
@@ -34,27 +35,6 @@ def paginate(queryset, page, page_size):
 initialize_mongodb()
 page_size = 25
 page = st.session_state.get("page_number", 1)
-
-min_day = datetime.date(2025, 1, 1)
-max_day = datetime.date(2025, 12, 31)
-employee_ids = get_employee_ids()
-status_values = get_status_values()
-
-selected_employee = st.selectbox(
-    "Filter by Employee", ["All"] + sorted(employee_ids))
-selected_status = st.selectbox(
-    "Filter by Status", ["All"] + sorted(status_values))
-selected_day = st.date_input("Filter by Day", value=(min_day, max_day), format="YYYY-MM-DD")
-
-sort_col1, sort_col2 = st.columns([1, 1])
-with sort_col1:
-  columns = ["Employee ID", "Day", "Check In", "Check Out", "Status"]
-  sort_column = st.selectbox("Sort by", columns, index=1)
-
-with sort_col2:
-  sort_direction = st.selectbox(
-      "Order", ["Desc", "Asc"], label_visibility="hidden")
-
 field_map = {
     "Employee ID": "employee_id",
     "Day": "day",
@@ -62,6 +42,37 @@ field_map = {
     "Check Out": "check_out",
     "Status": "status"
 }
+
+min_day = datetime.date(2025, 1, 1)
+max_day = datetime.date(2025, 12, 31)
+employee_ids = get_employee_ids()
+status_values = get_status_values()
+
+
+with st.sidebar:
+  st.header("Will come with somename")
+
+with st.expander("Filters", expanded=False):
+  filter_col1, filter_col2, filter_col3 = st.columns([2, 2, 3])
+  with filter_col1:
+    selected_employee = st.selectbox(
+        "Employee", ["All"] + sorted(employee_ids))
+  with filter_col2:
+    selected_status = st.selectbox("Status", ["All"] + sorted(status_values))
+  with filter_col3:
+    selected_day = st.date_input("Day", value=(
+        min_day, max_day), format="YYYY-MM-DD")
+
+  sort_col1, sort_col2 = st.columns([1, 1])
+  with sort_col1:
+    columns = ["Employee ID", "Day", "Check In", "Check Out", "Status"]
+    sort_column = st.selectbox("Sort by", columns, index=1)
+
+  with sort_col2:
+    sort_direction = st.selectbox(
+        "Order", ["Desc", "Asc"], label_visibility="hidden")
+
+# Sorting
 sort_field = field_map[sort_column]
 order_by = f"-{sort_field}" if sort_direction == "Desc" else sort_field
 
@@ -71,7 +82,8 @@ if selected_employee != "All":
 if selected_status != "All":
   queryset = queryset.filter(status=selected_status)
 if isinstance(selected_day, tuple) and len(selected_day) == 2:
-  queryset = queryset.filter(day__gte=selected_day[0], day__lte=selected_day[1])
+  queryset = queryset.filter(
+      day__gte=selected_day[0], day__lte=selected_day[1])
 else:
   queryset = queryset.filter(day=selected_day)
 
