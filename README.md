@@ -14,3 +14,7 @@ poetry run uvicorn main:app --host 0.0.0.0 --port 8010 --reload
 poetry run hello_world
 poetry run 02_function_calling
 ```
+
+```
+streamlit run project_cvb/scripts/<filename>
+```
