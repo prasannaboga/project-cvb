@@ -60,14 +60,14 @@ with st.expander("Filters", expanded=True):
   with filter_col1:
     employee_columns = ["All"] + sorted(employee_ids)
     selected_employee = st.selectbox(
-        "Employee", employee_columns, index=employee_columns.index(selected_employee))
+        "👩‍💻 Employee", employee_columns, index=employee_columns.index(selected_employee))
   with filter_col2:
     status_options = ["All"] + sorted(status_values)
     selected_status = st.selectbox(
-        "Status", status_options, index=status_options.index(selected_status))
+        "📋 Status", status_options, index=status_options.index(selected_status))
   with filter_col3:
     selected_day = st.date_input(
-        "Day", value=(min_day, max_day), format="YYYY-MM-DD")
+        "📅 Day", value=(min_day, max_day), format="YYYY-MM-DD")
 
   st.query_params["employee"] = selected_employee
   st.query_params["status"] = selected_status
@@ -75,11 +75,10 @@ with st.expander("Filters", expanded=True):
   sort_col1, sort_col2 = st.columns([1, 1])
   with sort_col1:
     columns = ["Employee ID", "Day", "Check In", "Check Out", "Status"]
-    sort_column = st.selectbox("Sort by", columns, index=1)
-
+    sort_column = st.selectbox("🔽 Sort by", columns, index=1)
   with sort_col2:
     sort_direction = st.selectbox(
-        "Order", ["Desc", "Asc"], label_visibility="hidden")
+        "↕️ Order", ["Desc", "Asc"], label_visibility="hidden")
 
 # Sorting
 sort_field = field_map[sort_column]
