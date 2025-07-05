@@ -65,8 +65,12 @@ def generate_attendance(args):
           status = "weekend"
       else:
         random_value = random.random()
-        if random_value <= 0.2:
-          status = random.choice(["absent", "leave"])
+        if random_value < 0.10:
+          status = "leave"
+          check_in_time = None
+          check_out_time = None
+        elif random_value < 0.12:
+          status = "absent"
           check_in_time = None
           check_out_time = None
         else:
