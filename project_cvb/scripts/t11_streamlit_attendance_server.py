@@ -8,7 +8,7 @@ from project_cvb.config.settings import Settings
 
 def paginate(queryset, page, page_size):
   total_records = queryset.count()
-  total_pages = (total_records + page_size - 1)
+  total_pages = (total_records + page_size - 1) // page_size
   page = min(max(1, page), total_pages)
   results = queryset.skip((page - 1) * page_size).limit(page_size)
   return list(results), page, total_pages, total_records
@@ -18,9 +18,8 @@ st.set_page_config(page_title="Demo App", layout="wide")
 st.title("App")
 
 initialize_mongodb()
-page_size = 20
+page_size = 25
 page = st.session_state.get("page_number", 1)
-
 
 employee_ids = Attendance.objects().distinct("employee_id")
 selected_employee = st.selectbox(
@@ -69,9 +68,7 @@ data = [
 
 st.dataframe(data, use_container_width=True)
 
-
-paginate_text, page_previous, page_next, page_stepper = st.columns([
-                                                                   1, 1, 1, 1])
+paginate_text, page_stepper = st.columns([4, 1])
 with paginate_text:
   st.caption(f"Page {page} of {total_pages} ({total_records} records)")
 
@@ -85,3 +82,5 @@ with page_stepper:
       key="page_number",
       label_visibility="collapsed"
   )
+  if page !=1 and new_page >= max(1, total_pages):
+    st.warning("You have reached the last page.")
