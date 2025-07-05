@@ -18,7 +18,7 @@ st.set_page_config(page_title="Demo App", layout="wide")
 st.title("App")
 
 initialize_mongodb()
-page_size = 25
+page_size = 20
 page = st.session_state.get("page_number", 1)
 
 sort_col1, sort_col2 = st.columns([1, 1])
@@ -65,14 +65,6 @@ paginate_text, page_previous, page_next, page_stepper = st.columns([
                                                                    1, 1, 1, 1])
 with paginate_text:
   st.caption(f"Page {page} of {total_pages} ({total_records} records)")
-
-with page_previous:
-  if st.button("Previous", key="previous_page") and page > 1:
-    st.session_state.page_number = page - 1
-
-with page_next:
-  if st.button("Next", key="next_page") and page < total_pages:
-    st.session_state.page_number = page + 1
 
 with page_stepper:
   new_page = st.number_input(
