@@ -47,6 +47,7 @@ target-version = ["py313"]
 06_pdf_rag_sample_prompt_response = "project_cvb.scripts.06_pdf_rag_sample_prompt_response:main"
 06_pdf_rag_streamlit = "project_cvb.scripts.06_pdf_rag_streamlit:main"
 hello_world = "project_cvb.scripts.hello_world:main"
+t11_generate_attendance = "project_cvb.scripts.t11_generate_attendance:run"
 
 [tool.custom_settings]
 new_key1 = "new_value1"
