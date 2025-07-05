@@ -48,20 +48,34 @@ max_day = datetime.date(2025, 12, 31)
 employee_ids = get_employee_ids()
 status_values = get_status_values()
 
+if "expander_open" not in st.session_state:
+  st.session_state.expander_open = False
+if "selected_employee" not in st.session_state:
+  st.session_state.selected_employee = "All"
+if "selected_status" not in st.session_state:
+  st.session_state.selected_status = "All"
+if "selected_day" not in st.session_state:
+  st.session_state.selected_day = (min_day, max_day)
+
+st.write(st.session_state)
 
 with st.sidebar:
   st.header("Will come with somename")
 
-with st.expander("Filters", expanded=False):
+with st.expander("Filters", expanded=st.session_state.expander_open):
   filter_col1, filter_col2, filter_col3 = st.columns([2, 2, 3])
   with filter_col1:
     selected_employee = st.selectbox(
-        "Employee", ["All"] + sorted(employee_ids))
+        "Employee", ["All"] + sorted(employee_ids),
+        key="selected_employee")
   with filter_col2:
-    selected_status = st.selectbox("Status", ["All"] + sorted(status_values))
+    selected_status = st.selectbox(
+        "Status", ["All"] + sorted(status_values),
+        key="selected_status")
   with filter_col3:
-    selected_day = st.date_input("Day", value=(
-        min_day, max_day), format="YYYY-MM-DD")
+    selected_day = st.date_input(
+        "Day", value=(min_day, max_day), format="YYYY-MM-DD",
+        key="selected_day")
 
   sort_col1, sort_col2 = st.columns([1, 1])
   with sort_col1:
