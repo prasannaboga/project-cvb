@@ -1,10 +1,11 @@
-import streamlit as st
+import datetime
 import time
+
+import streamlit as st
 
 from project_cvb.app.models.attendance import Attendance
 from project_cvb.config.mongodb_config import initialize_mongodb
 from project_cvb.config.settings import Settings
-
 
 st.set_page_config(page_title="Demo App", layout="wide")
 st.title("App")
@@ -34,12 +35,16 @@ initialize_mongodb()
 page_size = 25
 page = st.session_state.get("page_number", 1)
 
+min_day = datetime.date(2025, 1, 1)
+max_day = datetime.date(2025, 12, 31)
 employee_ids = get_employee_ids()
 status_values = get_status_values()
+
 selected_employee = st.selectbox(
     "Filter by Employee", ["All"] + sorted(employee_ids))
 selected_status = st.selectbox(
     "Filter by Status", ["All"] + sorted(status_values))
+selected_day = st.date_input("Filter by Day", value=(min_day, max_day), format="YYYY-MM-DD")
 
 sort_col1, sort_col2 = st.columns([1, 1])
 with sort_col1:
@@ -65,6 +70,10 @@ if selected_employee != "All":
   queryset = queryset.filter(employee_id=selected_employee)
 if selected_status != "All":
   queryset = queryset.filter(status=selected_status)
+if isinstance(selected_day, tuple) and len(selected_day) == 2:
+  queryset = queryset.filter(day__gte=selected_day[0], day__lte=selected_day[1])
+else:
+  queryset = queryset.filter(day=selected_day)
 
 with st.spinner("Loading data...", show_time=True):
   attendances, page, total_pages, total_records = paginate(
