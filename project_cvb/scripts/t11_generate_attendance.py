@@ -49,12 +49,13 @@ def generate_attendance(args):
     employee_id = f"emp_{i:02d}"
     logger.info(f"attendance for employee: {employee_id}")
     for single_date in (start_date + timedelta(n) for n in range((end_date - start_date).days + 1)):
-    #   logger.info(f" processing date: {single_date.date()}")
+      logger.info(f" processing date: {single_date.date()}")
       weekday = single_date.weekday()  # 5 = Saturday, 6 = Sunday
       if weekday in (5, 6):  # Saturday or Sunday
         random_value = random.random()
         if random_value <= 0.09:
-          logger.info(f"  weekend present status for random value: {random_value}")
+          logger.info(
+              f"  weekend present status for random value: {random_value}")
           check_in_time = random_time(single_date, punch_type="check_in")
           check_out_time = random_time(single_date, punch_type="check_out")
           status = "present"
@@ -63,14 +64,20 @@ def generate_attendance(args):
           check_out_time = None
           status = "weekend"
       else:
-        check_in_time = random_time(single_date, punch_type="check_in")
-        check_out_time = random_time(single_date, punch_type="check_out")
-        status = "present"
-      
+        random_value = random.random()
+        if random_value <= 0.2:
+          status = random.choice(["absent", "leave"])
+          check_in_time = None
+          check_out_time = None
+        else:
+          check_in_time = random_time(single_date, punch_type="check_in")
+          check_out_time = random_time(single_date, punch_type="check_out")
+          status = "present"
+
       update_fields = {
-        "set__status": status,
-        "set__check_in": check_in_time,
-        "set__check_out": check_out_time
+          "set__status": status,
+          "set__check_in": check_in_time,
+          "set__check_out": check_out_time
       }
 
       check_in_time = random_time(single_date, punch_type="check_in")
