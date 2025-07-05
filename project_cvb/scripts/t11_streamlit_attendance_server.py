@@ -21,6 +21,12 @@ initialize_mongodb()
 page_size = 20
 page = st.session_state.get("page_number", 1)
 
+
+employee_ids = Attendance.objects().distinct("employee_id")
+selected_employee = st.selectbox(
+    "Filter by Employee", ["All"] + sorted(employee_ids)
+)
+
 sort_col1, sort_col2 = st.columns([1, 1])
 with sort_col1:
   columns = ["Employee ID", "Day", "Check In", "Check Out", "Status"]
@@ -40,9 +46,13 @@ field_map = {
 sort_field = field_map[sort_column]
 order_by = f"-{sort_field}" if sort_direction == "Desc" else sort_field
 
+queryset = Attendance.objects()
+if selected_employee != "All":
+  queryset = queryset.filter(employee_id=selected_employee)
+
 with st.spinner("Loading data...", show_time=True):
   attendances, page, total_pages, total_records = paginate(
-      Attendance.objects().order_by(order_by),
+      queryset.order_by(order_by),
       page,
       page_size
   )
@@ -56,7 +66,6 @@ data = [
     }
     for a in attendances
 ]
-
 
 st.dataframe(data, use_container_width=True)
 
