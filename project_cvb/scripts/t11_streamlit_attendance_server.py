@@ -8,6 +8,8 @@ from project_cvb.config.settings import Settings
 
 def paginate(queryset, page, page_size):
   total_records = queryset.count()
+  if total_records == 0:
+    return [], 1, 1, 0
   total_pages = (total_records + page_size - 1) // page_size
   page = min(max(1, page), total_pages)
   results = queryset.skip((page - 1) * page_size).limit(page_size)
@@ -22,9 +24,11 @@ page_size = 25
 page = st.session_state.get("page_number", 1)
 
 employee_ids = Attendance.objects().distinct("employee_id")
+status_values = Attendance._fields["status"].choices
 selected_employee = st.selectbox(
-    "Filter by Employee", ["All"] + sorted(employee_ids)
-)
+    "Filter by Employee", ["All"] + sorted(employee_ids))
+selected_status = st.selectbox(
+    "Filter by Status", ["All"] + sorted(status_values))
 
 sort_col1, sort_col2 = st.columns([1, 1])
 with sort_col1:
@@ -48,13 +52,12 @@ order_by = f"-{sort_field}" if sort_direction == "Desc" else sort_field
 queryset = Attendance.objects()
 if selected_employee != "All":
   queryset = queryset.filter(employee_id=selected_employee)
+if selected_status != "All":
+  queryset = queryset.filter(status=selected_status)
 
 with st.spinner("Loading data...", show_time=True):
   attendances, page, total_pages, total_records = paginate(
-      queryset.order_by(order_by),
-      page,
-      page_size
-  )
+      queryset.order_by(order_by), page, page_size)
 data = [
     {
         "Employee ID": a.employee_id,
@@ -80,7 +83,7 @@ with page_stepper:
       value=page,
       step=1,
       key="page_number",
-      label_visibility="collapsed"
+      label_visibility="collapsed",
   )
-  if page !=1 and new_page >= max(1, total_pages):
+  if page != 1 and new_page >= max(1, total_pages):
     st.warning("You have reached the last page.")
