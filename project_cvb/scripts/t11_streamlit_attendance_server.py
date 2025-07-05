@@ -43,39 +43,34 @@ field_map = {
     "Status": "status"
 }
 
-min_day = datetime.date(2025, 1, 1)
-max_day = datetime.date(2025, 12, 31)
+min_day = datetime.date(2025, 7, 1)
+max_day = datetime.date(2025, 7, 31)
 employee_ids = get_employee_ids()
 status_values = get_status_values()
 
-if "expander_open" not in st.session_state:
-  st.session_state.expander_open = False
-if "selected_employee" not in st.session_state:
-  st.session_state.selected_employee = "All"
-if "selected_status" not in st.session_state:
-  st.session_state.selected_status = "All"
-if "selected_day" not in st.session_state:
-  st.session_state.selected_day = (min_day, max_day)
-
-st.write(st.session_state)
+query_params = st.query_params
+selected_employee = query_params.get("employee", "All")
+selected_status = query_params.get("status", "All")
 
 with st.sidebar:
   st.header("Will come with somename")
 
-with st.expander("Filters", expanded=st.session_state.expander_open):
+with st.expander("Filters", expanded=True):
   filter_col1, filter_col2, filter_col3 = st.columns([2, 2, 3])
   with filter_col1:
+    employee_columns = ["All"] + sorted(employee_ids)
     selected_employee = st.selectbox(
-        "Employee", ["All"] + sorted(employee_ids),
-        key="selected_employee")
+        "Employee", employee_columns, index=employee_columns.index(selected_employee))
   with filter_col2:
+    status_options = ["All"] + sorted(status_values)
     selected_status = st.selectbox(
-        "Status", ["All"] + sorted(status_values),
-        key="selected_status")
+        "Status", status_options, index=status_options.index(selected_status))
   with filter_col3:
     selected_day = st.date_input(
-        "Day", value=(min_day, max_day), format="YYYY-MM-DD",
-        key="selected_day")
+        "Day", value=(min_day, max_day), format="YYYY-MM-DD")
+
+  st.query_params["employee"] = selected_employee
+  st.query_params["status"] = selected_status
 
   sort_col1, sort_col2 = st.columns([1, 1])
   with sort_col1:
