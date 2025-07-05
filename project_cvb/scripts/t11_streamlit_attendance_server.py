@@ -6,6 +6,20 @@ from project_cvb.config.mongodb_config import initialize_mongodb
 from project_cvb.config.settings import Settings
 
 
+st.set_page_config(page_title="Demo App", layout="wide")
+st.title("App")
+
+
+@st.cache_data
+def get_employee_ids():
+  return Attendance.objects().distinct("employee_id")
+
+
+@st.cache_data
+def get_status_values():
+  return Attendance._fields["status"].choices
+
+
 def paginate(queryset, page, page_size):
   total_records = queryset.count()
   if total_records == 0:
@@ -16,15 +30,12 @@ def paginate(queryset, page, page_size):
   return list(results), page, total_pages, total_records
 
 
-st.set_page_config(page_title="Demo App", layout="wide")
-st.title("App")
-
 initialize_mongodb()
 page_size = 25
 page = st.session_state.get("page_number", 1)
 
-employee_ids = Attendance.objects().distinct("employee_id")
-status_values = Attendance._fields["status"].choices
+employee_ids = get_employee_ids()
+status_values = get_status_values()
 selected_employee = st.selectbox(
     "Filter by Employee", ["All"] + sorted(employee_ids))
 selected_status = st.selectbox(
