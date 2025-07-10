@@ -8,9 +8,7 @@ from project_cvb.app.models.attendance import Attendance
 from project_cvb.config.mongodb_config import initialize_mongodb
 
 logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[logging.StreamHandler(sys.stdout)]
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s", handlers=[logging.StreamHandler(sys.stdout)]
 )
 logger = logging.getLogger(__name__)
 
@@ -18,16 +16,13 @@ logger = logging.getLogger(__name__)
 def run():
   initialize_mongodb()
   parser = argparse.ArgumentParser(
-      description="Generate attendance records for past N days."
-  )
-  parser.add_argument(
-      "--past_days", type=int, default=30,
-      help="Number of past days to generate attendance for."
-  )
-  parser.add_argument(
-      "--delete", type=bool, default=False,
-      help="Delete existing attendance records"
-  )
+      description="Generate attendance records for past N days.")
+  parser.add_argument("--past_days", type=int, default=30,
+                      help="Number of past days to generate attendance for.")
+  parser.add_argument("--delete", type=bool, default=False,
+                      help="Delete existing attendance records")
+  parser.add_argument("--fillrecords", type=bool, default=True,
+                      help="Delete existing attendance records")
   args = parser.parse_args(sys.argv[1:])
   logger.info(f"agrguments: {vars(args)}")
   if args.delete:
@@ -40,7 +35,14 @@ def run():
 
 def generate_attendance(args):
   today = datetime.now()
-  start_date = today - timedelta(days=args.past_days)
+  if getattr(args, "fillrecords", True):
+    last_attendance = Attendance.objects().order_by("-day").first()
+    if last_attendance:
+      start_date = datetime.combine(last_attendance.day, datetime.min.time()) + timedelta(days=1)
+    else:
+      start_date = today - timedelta(days=args.past_days)
+  else:
+    start_date = today - timedelta(days=args.past_days)
   end_date = today
 
   logger.info(
@@ -78,23 +80,14 @@ def generate_attendance(args):
           check_out_time = random_time(single_date, punch_type="check_out")
           status = "present"
 
-      update_fields = {
-          "set__status": status,
-          "set__check_in": check_in_time,
-          "set__check_out": check_out_time
-      }
+      update_fields = {"set__status": status,
+                       "set__check_in": check_in_time, "set__check_out": check_out_time}
 
       check_in_time = random_time(single_date, punch_type="check_in")
       check_out_time = random_time(single_date, punch_type="check_out")
       attendance = Attendance.objects(
-          employee_id=employee_id,
-          day=single_date.date()
-      )
-      attendance = attendance.modify(
-          upsert=True,
-          new=True,
-          **update_fields
-      )
+          employee_id=employee_id, day=single_date.date())
+      attendance = attendance.modify(upsert=True, new=True, **update_fields)
       logger.info(f"  saved attendance record: {attendance.to_json()}")
 
 
