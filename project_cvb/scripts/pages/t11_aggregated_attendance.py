@@ -1,11 +1,16 @@
 # 2_Aggregated_Attendance.py
 
-import streamlit as st
 import datetime
+
+import pandas as pd
+import plotly.express as px
+import streamlit as st
+from dateutil.relativedelta import relativedelta
+
 from project_cvb.app.models.attendance import Attendance
 from project_cvb.config.mongodb_config import initialize_mongodb
-from dateutil.relativedelta import relativedelta
-import pandas as pd
+
+import altair as alt
 
 initialize_mongodb()
 
@@ -13,8 +18,21 @@ st.set_page_config(page_title="Aggregated Attendance", layout="wide")
 st.title("Aggregated Attendance")
 
 with st.expander("Filters", expanded=True):
-  months = ("All", "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December")
+  months = (
+      "All",
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+  )
   years = range(2024, 2026)
 
   today = datetime.date.today()
@@ -41,14 +59,12 @@ with st.expander("Filters", expanded=True):
   st.caption(
       f"Filtering from **{filter_date_range[0]}** to **{filter_date_range[1]}**")
 
-
 pipeline = [
     {
-
         "$match": {
             "day": {
                 "$gte": datetime.datetime.combine(start_date, datetime.time.min),
-                "$lte": datetime.datetime.combine(end_date, datetime.time.max)
+                "$lte": datetime.datetime.combine(end_date, datetime.time.max),
             }
         }
     },
@@ -56,9 +72,9 @@ pipeline = [
         "$group": {
             "_id": {
                 "employee_id": "$employee_id",
-                "status": "$status"
+                "status": "$status",
             },
-            "count": {"$sum": 1}
+            "count": {"$sum": 1},
         }
     }
 ]
@@ -73,13 +89,42 @@ records = [
 ]
 
 df = pd.DataFrame(records)
-
-# Pivot to wide format
-summary = df.pivot_table(
-  index="employee_id",
-  columns="status",
-  values="count",
-  fill_value=0
-).reset_index()
-
+all_statuses = Attendance._fields["status"].choices
+if not df.empty:
+  summary = (
+      df.pivot_table(
+          index="employee_id", columns="status", values="count", fill_value=0
+      )
+      .reindex(columns=all_statuses, fill_value=0)
+      .reset_index()
+  )
+else:
+  summary = pd.DataFrame(columns=["employee_id"] + list(all_statuses))
 st.dataframe(summary, use_container_width=True)
+
+data = {
+    "status": ["present", "absent", "leave", "holiday", "weekend"],
+    "count": [19, 0, 2, 2, 7],
+}
+
+df = pd.DataFrame(data)
+df["percentage"] = df["count"] / df["count"].sum() * 100
+df_nonzero = df[df["count"] > 0]
+
+chart = alt.Chart(df_nonzero).mark_bar().encode(
+    x=alt.X("count:Q", stack="normalize"),  
+    color=alt.Color("status:N", scale=alt.Scale(
+        domain=["present", "absent", "leave", "holiday", "weekend"],
+        range=["#22c55e", "#ef4444", "#facc15", "#3b82f6", "#a855f7"]
+    )),
+    tooltip=[
+        alt.Tooltip("status:N"),
+        alt.Tooltip("count:Q"),
+        alt.Tooltip("percentage:Q", format=".2f")
+    ]
+).properties(
+    height=50,
+    width=600
+)
+
+st.altair_chart(chart)
