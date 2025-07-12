@@ -58,13 +58,7 @@ with st.expander("Filters", expanded=True):
   filter_date_range = (start_date, end_date)
   st.caption(
       f"Filtering from **{filter_date_range[0]}** to **{filter_date_range[1]}**")
-status_color_map = {
-    "present": "#22c55e",
-    "absent": "#ef4444",
-    "leave": "#facc15",
-    "holiday": "#3b82f6",
-    "weekend": "#a855f7"
-}
+
 pipeline = [
     {
         "$match": {
@@ -94,9 +88,18 @@ records = [
     for r in results
 ]
 
-df = pd.DataFrame(records)
-all_statuses = Attendance._fields["status"].choices
+all_statuses = ["present", "absent", "leave", "holiday", "weekend"]
+sorted_statuses = ["s1present", "s2absent",
+                   "s3leave", "s4holiday", "s5weekend"]
+status_color_map = {
+    "present": "#22c55e",
+    "absent": "#ef4444",
+    "leave": "#facc15",
+    "holiday": "#3b82f6",
+    "weekend": "#a855f7"
+}
 
+df = pd.DataFrame(records)
 if not df.empty:
   aggregate_records = (
       df.pivot_table(
@@ -116,17 +119,24 @@ for _, row in aggregate_records.iterrows():
   name_col.write(row["employee_id"])
 
   status_data = pd.DataFrame({
-      "status": ["present", "absent", "leave", "holiday", "weekend"],
+      "status": all_statuses,
       "count": [row["present"], row["absent"], row["leave"], row["holiday"], row["weekend"]],
   })
-  status_data["percentage"] = status_data["count"] / status_data["count"].sum() * 100
+  status_data["percentage"] = status_data["count"] / \
+      status_data["count"].sum() * 100
   status_chart = alt.Chart(status_data).mark_bar().encode(
-      x=alt.X("status", title="Status"),
-      y=alt.Y("percentage", title="Percentage"),
-      color=alt.Color("status", scale=alt.Scale(domain=list(status_color_map.keys()),
-                                                     range=list(status_color_map.values()))),
-      tooltip=["status", "count", "percentage"]
-  ).properties()
+      x=alt.X("count:Q", stack="normalize", axis=None),
+      color=alt.Color("status:N", sort=sorted_statuses, scale=alt.Scale(domain=all_statuses,
+                                                                        range=list(status_color_map.values())), legend=None),
+      tooltip=[
+          alt.Tooltip("status:N", title="Status"),
+          alt.Tooltip("count:Q", title="Count"),
+          alt.Tooltip("percentage:Q", title="Percentage", format=".2f")
+      ]
+  ).properties(
+      height=45,
+      width="container"
+  )
   summary_col.altair_chart(status_chart, use_container_width=True)
 
 st.divider()
