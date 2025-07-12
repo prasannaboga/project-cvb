@@ -21,6 +21,7 @@ numpy = "1.26.4"
 ollama = "0.4.8"
 openai = "1.58.1"
 pillow = "11.0.0"
+plotly = "^6.2.0"
 pydantic = "2.10.4"
 pydantic-settings = "2.7.0"
 pymongo = "4.10.1"
@@ -32,7 +33,6 @@ unstructured = {version = "0.17.2", extras = ["all-docs"]}
 uvicorn = "0.34.0"
 watchdog = "6.0.0"
 youtube-dl = "^2021.12.17"
-plotly = "^6.2.0"
 
 [tool.black]
 line-length = 120
