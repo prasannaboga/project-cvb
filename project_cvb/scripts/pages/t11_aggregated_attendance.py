@@ -89,8 +89,7 @@ records = [
 ]
 
 all_statuses = ["present", "absent", "leave", "holiday", "weekend"]
-sorted_statuses = ["s1present", "s2absent",
-                   "s3leave", "s4holiday", "s5weekend"]
+status_order_map = {status: i for i, status in enumerate(all_statuses)}
 status_color_map = {
     "present": "#22c55e",
     "absent": "#ef4444",
@@ -124,10 +123,13 @@ for _, row in aggregate_records.iterrows():
   })
   status_data["percentage"] = status_data["count"] / \
       status_data["count"].sum() * 100
+  status_data['order'] = status_data['status'].map(status_order_map)
+
   status_chart = alt.Chart(status_data).mark_bar().encode(
       x=alt.X("count:Q", stack="normalize", axis=None),
-      color=alt.Color("status:N", sort=sorted_statuses, scale=alt.Scale(domain=all_statuses,
-                                                                        range=list(status_color_map.values())), legend=None),
+      order=alt.Order("order:Q"),
+      color=alt.Color("status:N", sort=all_statuses, scale=alt.Scale(domain=all_statuses,
+                                                                     range=[status_color_map[s] for s in all_statuses]), legend=None),
       tooltip=[
           alt.Tooltip("status:N", title="Status"),
           alt.Tooltip("count:Q", title="Count"),
