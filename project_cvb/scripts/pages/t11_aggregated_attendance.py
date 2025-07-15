@@ -2,6 +2,8 @@
 
 import datetime
 
+import altair as alt
+import numpy as np
 import pandas as pd
 import plotly.express as px
 import streamlit as st
@@ -9,8 +11,6 @@ from dateutil.relativedelta import relativedelta
 
 from project_cvb.app.models.attendance import Attendance
 from project_cvb.config.mongodb_config import initialize_mongodb
-
-import altair as alt
 
 initialize_mongodb()
 
@@ -88,6 +88,24 @@ records = [
     for r in results
 ]
 
+daily_records = Attendance.objects.filter(
+    day__gte=datetime.datetime.combine(start_date, datetime.time.min),
+    day__lte=datetime.datetime.combine(end_date, datetime.time.max)
+)
+hours_data = []
+for record in daily_records:
+  if record.check_in and record.check_out:
+    hours_worked = round(
+        (record.check_out - record.check_in).total_seconds() / 3600, 2)
+  else:
+    hours_worked = 0.00
+  hours_data.append({
+      "employee_id": record.employee_id,
+      "day": record.day,
+      "hours_worked": hours_worked,
+      "status": record.status})
+hours_df = pd.DataFrame(hours_data)
+
 all_statuses = ["present", "absent", "leave", "holiday", "weekend"]
 status_order_map = {status: i for i, status in enumerate(all_statuses)}
 status_color_map = {
@@ -116,6 +134,37 @@ for _, row in aggregate_records.iterrows():
   name_col, daily_time_col, summary_col = st.columns([1, 3, 1])
 
   name_col.write(row["employee_id"])
+
+  emp_hours = hours_df[hours_df["employee_id"] == row["employee_id"]].copy()
+  if not emp_hours.empty:
+    emp_hours = emp_hours.sort_values(by="day")
+    emp_hours["color"] = np.where(
+        emp_hours["hours_worked"] > 9, "darkgreen",
+        np.where(emp_hours["hours_worked"] < 6, "red", "steelblue")
+    )
+    bar_chart = alt.Chart(emp_hours).mark_bar().encode(
+        x=alt.X("day:T", title=None, axis=None),
+        y=alt.Y("hours_worked:Q", title=None, axis=None),
+        color=alt.Color("color:N", scale=None, legend=None),
+        tooltip=[
+            alt.Tooltip("day:T", title="Day"),
+            alt.Tooltip("hours_worked:Q", title="Hours Worked")
+        ]
+    ).properties(
+        height=125,
+        width="container"
+    ).configure_view(
+        strokeWidth=0,
+        stroke=None
+    ).interactive(False)
+    bar_chart = bar_chart.configure_axis(
+        grid=False
+    ).configure_mark(
+        stroke=None
+    )
+    daily_time_col.altair_chart(bar_chart, use_container_width=True)
+  else:
+    daily_time_col.write("No data available")
 
   status_data = pd.DataFrame({
       "status": all_statuses,
