@@ -7,6 +7,9 @@ readme = "README.md"
 version = "0.1.0"
 
 [tool.poetry.dependencies]
+aiohttp = "3.12.15"
+asyncio = "4.0.0"
+beautifulsoup4 = "4.13.4"
 black = "24.10.0"
 chromadb = "^1.0.6"
 fastapi = "0.115.9"
@@ -16,6 +19,7 @@ ipykernel = "6.29.5"
 ipywidgets = "8.1.5"
 langchain-community = "0.3.22"
 langchain-ollama = "0.3.2"
+mcp = "1.12.4"
 mongoengine = "0.29.1"
 numpy = "1.26.4"
 ollama = "0.4.8"
@@ -27,12 +31,14 @@ pydantic-settings = "2.7.0"
 pymongo = "4.10.1"
 python = "3.12.7"
 python-dotenv = "1.0.1"
+selenium = "4.34.2"
 streamlit = "1.44.1"
 torch = "2.2.2"
 unstructured = {version = "0.17.2", extras = ["all-docs"]}
+uv = "0.8.6"
 uvicorn = "0.34.0"
 watchdog = "6.0.0"
-youtube-dl = "^2021.12.17"
+youtube-dl = "2021.12.17"
 
 [tool.black]
 line-length = 120
