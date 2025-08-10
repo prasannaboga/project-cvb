@@ -4,10 +4,24 @@ import argparse
 import asyncio
 import sys
 from email import parser
+import logging
+from pathlib import Path
 
 import aiohttp
 from bs4 import BeautifulSoup
 from mcp.server.fastmcp import FastMCP
+
+
+log_dir = Path(__file__).resolve().parent.parent / "logs"
+log_dir.mkdir(exist_ok=True)
+
+log_file = log_dir / "development.log"
+logging.basicConfig(
+    filename=log_file,
+    filemode="a",
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    level=logging.DEBUG,
+)
 
 mcp = FastMCP("sample_server", host="127.0.0.1",
               port=8001, log_level="DEBUG", debug=True)
@@ -28,6 +42,7 @@ async def add_numbers(a: float, b: float) -> dict:
 
 @mcp.tool()
 async def extract_metadata(url: str) -> dict:
+  logging.info(f"extract_metadata called with params: {{'url': {url}}}")
   """Extract metadata from the specified URL."""
   async with aiohttp.ClientSession() as session:
     async with session.get(url) as response:
