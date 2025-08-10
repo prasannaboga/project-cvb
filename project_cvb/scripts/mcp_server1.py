@@ -2,15 +2,19 @@
 
 import argparse
 import asyncio
+import logging
+import os
 import sys
 from email import parser
-import logging
 from pathlib import Path
 
 import aiohttp
+import requests
 from bs4 import BeautifulSoup
+from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
 
+load_dotenv()
 
 log_dir = Path(__file__).resolve().parent.parent / "logs"
 log_dir.mkdir(exist_ok=True)
@@ -93,6 +97,35 @@ async def extract_metadata(url: str) -> dict:
             "url": url,
             "error": f"Failed to fetch URL: HTTP {response.status}"
         }
+
+
+@mcp.tool()
+def send_email(mail_subject: str, mail_body: str, to_email: str):
+  logging.info(
+      f"send_email called with params: {{'mail_subject': {mail_subject}, 'mail_body': {mail_body}, 'to_email': {to_email}}}")
+  try:
+    mailgun_domain = os.getenv("MAILGUN_DOMAIN")
+    mailgun_api_key = os.getenv("MAILGUN_API_KEY")
+    from_email = os.getenv("FROM_EMAIL")
+
+    response = requests.post(
+        f"https://api.mailgun.net/v3/{mailgun_domain}/messages",
+        auth=("api", mailgun_api_key),
+        data={
+            "from": from_email,
+            "to": [to_email],
+            "subject": mail_subject,
+            "text": mail_body,
+        }
+    )
+    response.raise_for_status()
+    logging.info("Email sent successfully")
+    return {"status": "success"}
+
+  except Exception as e:
+    logging.exception("Failed to send email")
+    return {"status": "error", "message": str(e)}
+
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser()
