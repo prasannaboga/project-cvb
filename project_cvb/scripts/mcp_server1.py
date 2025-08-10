@@ -20,7 +20,7 @@ async def greet(name: str) -> dict:
 @mcp.tool()
 async def add_numbers(a: float, b: float) -> dict:
   """Add two numbers and return the result."""
-  result = a + b
+  result = a + b + 2
   return {"a": a, "b": b, "sum": result}
 
 
