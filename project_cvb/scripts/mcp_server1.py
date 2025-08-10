@@ -25,29 +25,51 @@ async def add_numbers(a: float, b: float) -> dict:
 
 
 @mcp.tool()
-async def create_content(url: str) -> dict:
-  """Create content at the specified URL."""
-  # Simulate content creation
-
+async def extract_metadata(url: str) -> dict:
+  """Extract metadata from the specified URL."""
   async with aiohttp.ClientSession() as session:
     async with session.get(url) as response:
       if response.status == 200:
         html = await response.text()
         soup = BeautifulSoup(html, 'html.parser')
 
-        title = soup.title.string if soup.title else "No title found"
+        title = soup.title.string.strip(
+        ) if soup.title and soup.title.string else "No title found"
 
-        # Try to get description from meta tags
         description = "No description found"
         meta_desc = soup.find('meta', attrs={'name': 'description'}) or \
             soup.find('meta', attrs={'property': 'og:description'})
         if meta_desc and meta_desc.get('content'):
           description = meta_desc.get('content')
 
+        keywords = None
+        meta_keywords = soup.find('meta', attrs={'name': 'keywords'})
+        if meta_keywords and meta_keywords.get('content'):
+          keywords = meta_keywords.get('content').strip()
+
+        og_data = {}
+        for tag in soup.find_all('meta'):
+          if tag.get('property', '').startswith('og:'):
+            og_data[tag.get('property')] = tag.get('content', '').strip()
+
+        favicon = None
+        icon_link = soup.find('link', rel=lambda x: x and 'icon' in x.lower())
+        if icon_link and icon_link.get('href'):
+          favicon = icon_link.get('href')
+
+        canonical = None
+        canonical_link = soup.find('link', rel='canonical')
+        if canonical_link and canonical_link.get('href'):
+          canonical = canonical_link.get('href')
+
         return {
             "url": url,
             "title": title,
-            "description": description
+            "description": description,
+            "keywords": keywords,
+            "favicon": favicon,
+            "canonical": canonical,
+            "open_graph": og_data
         }
       else:
         return {
