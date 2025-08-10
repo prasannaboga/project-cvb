@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 
+import argparse
 import asyncio
+import sys
+from email import parser
+
 import aiohttp
-
-from mcp.server.fastmcp import FastMCP
 from bs4 import BeautifulSoup
-
+from mcp.server.fastmcp import FastMCP
 
 mcp = FastMCP("sample_server", host="127.0.0.1",
               port=8001, log_level="DEBUG", debug=True)
@@ -78,4 +80,13 @@ async def extract_metadata(url: str) -> dict:
         }
 
 if __name__ == "__main__":
-  mcp.run(transport="streamable-http")
+  parser = argparse.ArgumentParser()
+  parser.add_argument("--transport", help="Transport method.")
+  args = parser.parse_args()
+  transport = "stdio"
+  if args.transport == "streamable-http":
+    print(f"Options provided: {args.transport}", file=sys.stderr)
+    transport = "streamable-http"
+
+  print("Starting MCP server...", file=sys.stderr)
+  mcp.run(transport=transport)

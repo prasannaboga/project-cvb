@@ -65,3 +65,21 @@ new_key = "new_value"
 [build-system]
 build-backend = "poetry.core.masonry.api"
 requires = ["poetry-core"]
+
+# --------------------------------------------------------------------
+# PEP 621-compatible section for uv / MCP / other modern tools
+# --------------------------------------------------------------------
+[project]
+authors = [{name = "prasannaboga"}]
+dependencies = [
+  "aiohttp==3.12.15", 
+  "mcp[cli]==1.12.4",
+  "BeautifulSoup4==4.13.4"
+]
+description = "project-cvb"
+name = "project-cvb"
+requires-python = ">=3.12"
+version = "0.1.0"
+
+[project.scripts]
+mcp_server1 = "project_cvb.scripts.mcp_server1:main"
